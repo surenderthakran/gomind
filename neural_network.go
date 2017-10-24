@@ -41,3 +41,11 @@ func (network *NeuralNetwork) CalculateOutput(input []float64) []float64 {
 	hiddenOutput := network.hiddenLayer.calculateOutput(input)
 	return network.outputLayer.calculateOutput(hiddenOutput)
 }
+
+// Describe function prints the current state of the neural network and its components.
+func (network *NeuralNetwork) Describe() {
+	fmt.Println("Hidden Layer:")
+	network.hiddenLayer.describe()
+	fmt.Println("\nOutput Layer:")
+	network.outputLayer.describe()
+}

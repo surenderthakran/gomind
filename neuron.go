@@ -10,6 +10,13 @@ type neuron struct {
 	bias     float64
 }
 
+func (n *neuron) String() string {
+	return fmt.Sprintf(`Neuron {
+	weights: %v,
+	bias: %v,
+}`, n.weights, n.bias)
+}
+
 func newNeuron(weights []float64, bias float64) (*neuron, error) {
 	if len(weights) == 0 {
 		return nil, fmt.Errorf("unable to create neuron without any weights")

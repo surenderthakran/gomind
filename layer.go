@@ -42,3 +42,10 @@ func (l *layer) calculateOutput(input []float64) []float64 {
 	}
 	return output
 }
+
+func (l *layer) describe() {
+	fmt.Println("Neurons:")
+	for _, neuron := range l.neurons {
+		fmt.Println(neuron)
+	}
+}
