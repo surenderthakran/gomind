@@ -34,3 +34,10 @@ func NewNeuralNetwork(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int
 		outputLayer:    outputLayer,
 	}, nil
 }
+
+// CalculateOutput function returns the output array from the neural network for the given
+// input array based on the current weights.
+func (network *NeuralNetwork) CalculateOutput(input []float64) []float64 {
+	hiddenOutput := network.hiddenLayer.calculateOutput(input)
+	return network.outputLayer.calculateOutput(hiddenOutput)
+}

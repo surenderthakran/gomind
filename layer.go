@@ -32,3 +32,13 @@ func newLayer(numberOfNeurons, numberOfNeuronsInPreviousLayer int) (*layer, erro
 		neurons: neurons,
 	}, nil
 }
+
+// calculateOutput function returns the output array from a layer of neurons for an
+// array of input for the current set of weights of its neurons.
+func (l *layer) calculateOutput(input []float64) []float64 {
+	var output []float64
+	for _, neuron := range l.neurons {
+		output = append(output, neuron.calculateOutput(input))
+	}
+	return output
+}
