@@ -61,6 +61,64 @@ func squash(input float64) float64 {
 	}
 }
 
+// calculatePdErrorWrtTotalNetInputOfOutputNeuron function is only for output layer neurons.
+// It returns the partial differential of output's error with respect to
+// the total net input to the neuron. i.e. ∂Error/∂Input
+//
+// By applying the chain rule, https://en.wikipedia.org/wiki/Chain_rule
+// ∂Error/∂Input = ∂Error/∂Output * ∂Output/∂Input
+func (n *neuron) calculatePdErrorWrtTotalNetInputOfOutputNeuron(targetOutput float64) float64 {
+	pdErrorWrtOutput := n.calculatePdErrorWrtOutput(targetOutput)
+	dOutputWrtTotalNetInput := n.calculateDerivativeOutputWrtTotalNetInput()
+	n.pdErrorWrtTotalNetInputOfOutputNeuron = pdErrorWrtOutput * dOutputWrtTotalNetInput
+	return n.pdErrorWrtTotalNetInputOfOutputNeuron
+}
+
+// calculatePdErrorWrtOutput function is only for output layer neurons.
+// It returns the partial derivative of a neuron's output's error with respect to its output.
+//
+// Error of a neuron's output is calculated from the Squared Error function.
+// https://en.wikipedia.org/wiki/Backpropagation#Derivation
+// Error = 1/2 * (target output - actual output) ^ 2
+// The factor of 1/2 is included to cancel the exponent when differentiating.
+//
+// A partial differential of the error with respect to the actual output gives us:
+// ∂Error/∂Actual = ∂(1/2 * (Target - Actual) ^ 2)/∂Actual
+// 								= 1/2 * ∂((Target - Actual) ^ 2)/∂Actual
+// 								= 1/2 * 2 * ((Target - Actual) ^ (2 - 1)) * ∂(Target - Actual)/∂Actual
+// 								= 1/2 * 2 * ((Target - Actual) ^ (2 - 1)) * -1
+// 								= - (Target - Actual)
+// 								= Actual - Target
+func (n *neuron) calculatePdErrorWrtOutput(targetOutput float64) float64 {
+	return n.output - targetOutput
+}
+
+// calculateDerivativeOutputWrtTotalNetInput function is used by both hidden and output layer neurons.
+// It returns the derivative (not partial derivative) of a neuron's output with respect to  the total net input.
+// Since a neuron's total net input is squashed using the sigmoid function to get its output,
+// we need to calculate the derivative of the sigmoid function.
+// Output = 1.0 / (1.0 + (e ^ -Input))
+//
+// dOutput/dInput = d(1.0 / (1.0 + (e ^ -Input)))/dInput
+// According to, https://en.wikipedia.org/wiki/Logistic_function#Derivative
+// dOutput/dInput = Output * (1 - Output)
+func (n *neuron) calculateDerivativeOutputWrtTotalNetInput() float64 {
+	return n.output * (1 - n.output)
+}
+
+// calculatePdTotalNetInputWrtWeight function is used by both hidden and output layer neurons.
+// It returns the partial derivative of total net input to a neuron with respect to one of its weight
+// i.e. ∂TotalNetInput/∂Weight.
+//
+// The total net input of a neuron is a weighted summation of all the inputs and their respective weights to the neuron plus the bias of the neuron.
+// Total Net Input = (n Σ ᵢ = 1) ((inputᵢ * weightᵢ) + biasᵢ)
+//
+// The partial derivative of the total net input with respect to the weight is the input for that particular weight
+// since all the weighted sums and the bias are treated as constants.
+func (n *neuron) calculatePdTotalNetInputWrtWeight(index int) float64 {
+	return n.inputs[index]
+}
+
 func (n *neuron) calculateError(targetOutput float64) float64 {
 	return 0.5 * math.Pow(targetOutput-n.output, 2)
 }
