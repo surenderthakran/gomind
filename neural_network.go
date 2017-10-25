@@ -42,6 +42,15 @@ func (network *NeuralNetwork) CalculateOutput(input []float64) []float64 {
 	return network.outputLayer.calculateOutput(hiddenOutput)
 }
 
+// CalculateError function generates the error value for the given target output against the network's last output.
+func (network *NeuralNetwork) CalculateError(targetOutput []float64) float64 {
+	error := float64(0)
+	for index, neuron := range network.outputLayer.neurons {
+		error += neuron.calculateError(targetOutput[index])
+	}
+	return error
+}
+
 // Describe function prints the current state of the neural network and its components.
 func (network *NeuralNetwork) Describe() {
 	fmt.Println("Hidden Layer:")

@@ -60,3 +60,7 @@ func squash(input float64) float64 {
 		return 1.0 / (1.0 + math.Exp(-input))
 	}
 }
+
+func (n *neuron) calculateError(targetOutput float64) float64 {
+	return 0.5 * math.Pow(targetOutput-n.output, 2)
+}
