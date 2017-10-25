@@ -46,6 +46,15 @@ func (network *NeuralNetwork) CalculateOutput(input []float64) []float64 {
 	return network.outputLayer.calculateOutput(hiddenOutput)
 }
 
+// LastOutput function returns the array of last output computed by the network.
+func (network *NeuralNetwork) LastOutput() []float64 {
+	var output []float64
+	for _, neuron := range network.outputLayer.neurons {
+		output = append(output, neuron.output)
+	}
+	return output
+}
+
 // Train function trains the neural network using the given set of inputs and outputs.
 func (network *NeuralNetwork) Train(trainingInput, trainingOutput []float64) {
 	outputs := network.CalculateOutput(trainingInput)
