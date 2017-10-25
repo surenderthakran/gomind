@@ -6,15 +6,24 @@ import (
 )
 
 type neuron struct {
+	inputs   []float64
 	weights  []float64
 	bias     float64
+	netInput float64
+	output   float64
+	// Holds the partial derivative of error with respect to the total net input.
+	// This value is only relevant for the output layer neurons.
+	pdErrorWrtTotalNetInputOfOutputNeuron float64
 }
 
 func (n *neuron) String() string {
 	return fmt.Sprintf(`Neuron {
+	inputs: %v,
 	weights: %v,
 	bias: %v,
-}`, n.weights, n.bias)
+	netInput: %v,
+	output: %v
+}`, n.inputs, n.weights, n.bias, n.netInput, n.output)
 }
 
 func newNeuron(weights []float64, bias float64) (*neuron, error) {
