@@ -3,6 +3,8 @@ package gomind
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 // NeuralNetwork describes a single hidden layer MLP feed forward neural network.
@@ -18,6 +20,9 @@ const (
 
 // NewNeuralNetwork function returns a new NeuralNetwork object.
 func NewNeuralNetwork(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int) (*NeuralNetwork, error) {
+	// setting timestamp as seed for random number generator.
+	rand.Seed(time.Now().UnixNano())
+
 	hiddenLayer, err := newLayer(numberOfHiddenNeurons, numberOfInputs)
 	if err != nil {
 		return nil, fmt.Errorf("error creating a hidden layer: %v", err)
