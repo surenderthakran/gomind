@@ -6,11 +6,13 @@ import (
 )
 
 type neuron struct {
-	inputs   []float64
-	weights  []float64
-	bias     float64
-	netInput float64
-	output   float64
+	inputs     []float64
+	weights    []float64
+	newWeights []float64
+	bias       float64
+	newBias    float64
+	netInput   float64
+	output     float64
 	// Holds the partial derivative of error with respect to the total net input.
 	// This value is only relevant for the output layer neurons.
 	pdErrorWrtTotalNetInputOfOutputNeuron float64
@@ -18,12 +20,9 @@ type neuron struct {
 
 func (n *neuron) String() string {
 	return fmt.Sprintf(`Neuron {
-	inputs: %v,
 	weights: %v,
 	bias: %v,
-	netInput: %v,
-	output: %v
-}`, n.inputs, n.weights, n.bias, n.netInput, n.output)
+}`, n.weights, n.bias)
 }
 
 func newNeuron(weights []float64, bias float64) (*neuron, error) {
@@ -31,8 +30,9 @@ func newNeuron(weights []float64, bias float64) (*neuron, error) {
 		return nil, fmt.Errorf("unable to create neuron without any weights")
 	}
 	return &neuron{
-		weights: weights,
-		bias:    bias,
+		weights:    weights,
+		newWeights: make([]float64, len(weights)),
+		bias:       bias,
 	}, nil
 }
 
