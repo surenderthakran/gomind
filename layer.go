@@ -20,8 +20,9 @@ func newLayer(numberOfNeurons, numberOfNeuronsInPreviousLayer int) (*layer, erro
 		for i := 0; i < numberOfNeuronsInPreviousLayer; i++ {
 			weights = append(weights, rand.Float64())
 		}
-		fmt.Println(fmt.Sprintf("weights: %v", weights))
+
 		bias := rand.Float64()
+
 		neuron, err := newNeuron(weights, bias)
 		if err != nil {
 			return nil, fmt.Errorf("error creating a neuron: %v", err)
@@ -44,8 +45,8 @@ func (l *layer) calculateOutput(input []float64) []float64 {
 }
 
 func (l *layer) describe() {
-	fmt.Println("Neurons:")
-	for _, neuron := range l.neurons {
+	for index, neuron := range l.neurons {
+		fmt.Println(fmt.Sprintf("Neuron: %v", index+1))
 		fmt.Println(neuron)
 	}
 }
