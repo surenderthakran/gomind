@@ -3,10 +3,12 @@ package gomind
 import (
 	"fmt"
 	"math"
+
+	"github.com/surenderthakran/gomind/activation"
 )
 
 type neuron struct {
-	activation Activation
+	activation activation.Activation
 	inputs     []float64
 	weights    []float64
 	newWeights []float64
@@ -31,7 +33,7 @@ func newNeuron(weights []float64, bias float64) (*neuron, error) {
 		return nil, fmt.Errorf("unable to create neuron without any weights")
 	}
 	return &neuron{
-		activation: SIGMOID,
+		activation: activation.SIGMOID,
 		weights:    weights,
 		newWeights: make([]float64, len(weights)),
 		bias:       bias,
@@ -60,7 +62,7 @@ func (n *neuron) calculateTotalNetInput(input []float64) float64 {
 
 // squash function applies an activation function on the total net input of a neuron to generate its output.
 func (n *neuron) squash() float64 {
-	if n.activation == SIGMOID {
+	if n.activation == activation.SIGMOID {
 		// Sigmoid activation function applies the non-linear sigmoid function on the total net input of a neuron to generate its output.
 		// f(x) = 1 * (1 + (e ^ -x))
 		// to avoid floating-point overflow in the exponential function, we use the
@@ -118,7 +120,7 @@ func (n *neuron) calculateDerivativeOutputWrtTotalNetInput() float64 {
 	// dOutput/dInput = d(1.0 / (1.0 + (e ^ -Input)))/dInput
 	// According to, https://en.wikipedia.org/wiki/Logistic_function#Derivative
 	// dOutput/dInput = Output * (1 - Output)
-	if n.activation == SIGMOID {
+	if n.activation == activation.SIGMOID {
 		return n.output * (1 - n.output)
 	}
 	return 0
