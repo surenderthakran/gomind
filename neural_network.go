@@ -14,6 +14,12 @@ type NeuralNetwork struct {
 	outputLayer    *layer
 }
 
+type Activation int
+
+const (
+	SIGMOID Activation = iota
+)
+
 const (
 	learningRate = 0.5
 )

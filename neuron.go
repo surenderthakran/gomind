@@ -6,6 +6,7 @@ import (
 )
 
 type neuron struct {
+	activation Activation
 	inputs     []float64
 	weights    []float64
 	newWeights []float64
@@ -30,6 +31,7 @@ func newNeuron(weights []float64, bias float64) (*neuron, error) {
 		return nil, fmt.Errorf("unable to create neuron without any weights")
 	}
 	return &neuron{
+		activation: SIGMOID,
 		weights:    weights,
 		newWeights: make([]float64, len(weights)),
 		bias:       bias,
@@ -39,7 +41,7 @@ func newNeuron(weights []float64, bias float64) (*neuron, error) {
 func (n *neuron) calculateOutput(inputs []float64) float64 {
 	n.inputs = inputs
 	n.netInput = n.calculateTotalNetInput(n.inputs)
-	n.output = squash(n.netInput)
+	n.output = n.squash()
 	return n.output
 }
 
@@ -56,18 +58,22 @@ func (n *neuron) calculateTotalNetInput(input []float64) float64 {
 	return netInput + n.bias
 }
 
-// squash function applies the non-linear sigmoid activation function on the total net input of a neuron to generate its output.
-// f(x) = 1 * (1 + (e ^ -x))
-func squash(input float64) float64 {
-	// to avoid floating-point overflow in the exponential function, we use the
-	// constant 45 as limiting value on the extremes.
-	if input < -45 {
-		return 0
-	} else if input > 45 {
-		return 1
-	} else {
-		return 1.0 / (1.0 + math.Exp(-input))
+// squash function applies an activation function on the total net input of a neuron to generate its output.
+func (n *neuron) squash() float64 {
+	if n.activation == SIGMOID {
+		// Sigmoid activation function applies the non-linear sigmoid function on the total net input of a neuron to generate its output.
+		// f(x) = 1 * (1 + (e ^ -x))
+		// to avoid floating-point overflow in the exponential function, we use the
+		// constant 45 as limiting value on the extremes.
+		if n.netInput < -45 {
+			return 0
+		} else if n.netInput > 45 {
+			return 1
+		} else {
+			return 1.0 / (1.0 + math.Exp(-n.netInput))
+		}
 	}
+	return 0
 }
 
 // calculatePdErrorWrtTotalNetInputOfOutputNeuron function is only for output layer neurons.
@@ -104,15 +110,18 @@ func (n *neuron) calculatePdErrorWrtOutput(targetOutput float64) float64 {
 
 // calculateDerivativeOutputWrtTotalNetInput function is used by both hidden and output layer neurons.
 // It returns the derivative (not partial derivative) of a neuron's output with respect to  the total net input.
-// Since a neuron's total net input is squashed using the sigmoid function to get its output,
-// we need to calculate the derivative of the sigmoid function.
-// Output = 1.0 / (1.0 + (e ^ -Input))
-//
-// dOutput/dInput = d(1.0 / (1.0 + (e ^ -Input)))/dInput
-// According to, https://en.wikipedia.org/wiki/Logistic_function#Derivative
-// dOutput/dInput = Output * (1 - Output)
 func (n *neuron) calculateDerivativeOutputWrtTotalNetInput() float64 {
-	return n.output * (1 - n.output)
+	// With Sigmoid activation, since a neuron's total net input is squashed using the sigmoid function to get its output,
+	// we need to calculate the derivative of the sigmoid function.
+	// Output = 1.0 / (1.0 + (e ^ -Input))
+	//
+	// dOutput/dInput = d(1.0 / (1.0 + (e ^ -Input)))/dInput
+	// According to, https://en.wikipedia.org/wiki/Logistic_function#Derivative
+	// dOutput/dInput = Output * (1 - Output)
+	if n.activation == SIGMOID {
+		return n.output * (1 - n.output)
+	}
+	return 0
 }
 
 // calculatePdTotalNetInputWrtWeight function is used by both hidden and output layer neurons.
