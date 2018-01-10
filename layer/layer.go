@@ -1,4 +1,4 @@
-package gomind
+package layer
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"github.com/surenderthakran/gomind/neuron"
 )
 
-type layer struct {
+type Layer struct {
 	neurons []*neuron.Neuron
 }
 
-func newLayer(numberOfNeurons, numberOfNeuronsInPreviousLayer int) (*layer, error) {
+func New(numberOfNeurons, numberOfNeuronsInPreviousLayer int) (*Layer, error) {
 	if numberOfNeurons <= 0 {
 		return nil, fmt.Errorf("%d is not a valid number of neurons", numberOfNeurons)
 	}
@@ -31,14 +31,19 @@ func newLayer(numberOfNeurons, numberOfNeuronsInPreviousLayer int) (*layer, erro
 		}
 		neurons = append(neurons, neuron)
 	}
-	return &layer{
+	return &Layer{
 		neurons: neurons,
 	}, nil
 }
 
-// calculateOutput function returns the output array from a layer of neurons for an
+// Neurons function returns an array of pointers to neurons of the layer.
+func (l *Layer) Neurons() []*neuron.Neuron {
+	return l.neurons
+}
+
+// CalculateOutput function returns the output array from a layer of neurons for an
 // array of input for the current set of weights of its neurons.
-func (l *layer) calculateOutput(input []float64) []float64 {
+func (l *Layer) CalculateOutput(input []float64) []float64 {
 	var output []float64
 	for _, neuron := range l.neurons {
 		output = append(output, neuron.CalculateOutput(input))
@@ -46,7 +51,8 @@ func (l *layer) calculateOutput(input []float64) []float64 {
 	return output
 }
 
-func (l *layer) describe() {
+// Describe function prints the description of the neurons in the layer.
+func (l *Layer) Describe() {
 	for index, neuron := range l.neurons {
 		fmt.Println(fmt.Sprintf("Neuron: %v", index+1))
 		fmt.Println(neuron)

@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/surenderthakran/gomind/layer"
 )
 
 // NeuralNetwork describes a single hidden layer MLP feed forward neural network.
 type NeuralNetwork struct {
 	numberOfInputs int
-	hiddenLayer    *layer
-	outputLayer    *layer
+	hiddenLayer    *layer.Layer
+	outputLayer    *layer.Layer
 }
 
 const (
@@ -23,12 +25,12 @@ func NewNeuralNetwork(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int
 	// setting timestamp as seed for random number generator.
 	rand.Seed(time.Now().UnixNano())
 
-	hiddenLayer, err := newLayer(numberOfHiddenNeurons, numberOfInputs)
+	hiddenLayer, err := layer.New(numberOfHiddenNeurons, numberOfInputs)
 	if err != nil {
 		return nil, fmt.Errorf("error creating a hidden layer: %v", err)
 	}
 
-	outputLayer, err := newLayer(numberOfOutputs, numberOfHiddenNeurons)
+	outputLayer, err := layer.New(numberOfOutputs, numberOfHiddenNeurons)
 	if err != nil {
 		return nil, fmt.Errorf("error creating output layer: %v", err)
 	}
@@ -43,14 +45,14 @@ func NewNeuralNetwork(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int
 // CalculateOutput function returns the output array from the neural network for the given
 // input array based on the current weights.
 func (network *NeuralNetwork) CalculateOutput(input []float64) []float64 {
-	hiddenOutput := network.hiddenLayer.calculateOutput(input)
-	return network.outputLayer.calculateOutput(hiddenOutput)
+	hiddenOutput := network.hiddenLayer.CalculateOutput(input)
+	return network.outputLayer.CalculateOutput(hiddenOutput)
 }
 
 // LastOutput function returns the array of last output computed by the network.
 func (network *NeuralNetwork) LastOutput() []float64 {
 	var output []float64
-	for _, neuron := range network.outputLayer.neurons {
+	for _, neuron := range network.outputLayer.Neurons() {
 		output = append(output, neuron.Output())
 	}
 	return output
@@ -74,7 +76,7 @@ func (network *NeuralNetwork) Train(trainingInput, trainingOutput []float64) {
 // By applying the chain rule, https://en.wikipedia.org/wiki/Chain_rule
 // ∂TotalError/∂OutputNeuronWeight = ∂TotalError/∂TotalNetInputToOutputNeuron * ∂TotalNetInputToOutputNeuron/∂OutputNeuronWeight
 func (network *NeuralNetwork) calculateNewOutputLayerWeights(outputs, targetOutputs []float64) {
-	for neuronIndex, neuron := range network.outputLayer.neurons {
+	for neuronIndex, neuron := range network.outputLayer.Neurons() {
 		// Since a neuron has only one total net input and one output, we need to calculate
 		// the partial derivative of error with respect to the total net input (∂TotalError/∂TotalNetInputToOutputNeuron) only once.
 		//
@@ -131,12 +133,12 @@ func (network *NeuralNetwork) calculateNewOutputLayerWeights(outputs, targetOutp
 func (network *NeuralNetwork) calculateNewHiddenLayerWeights() {
 	// First we calculate the derivative of total error with respect to the output of each hidden neuron.
 	// i.e. ∂TotalError/∂HiddenNeuronOutput.
-	for neuronIndex, neuron := range network.hiddenLayer.neurons {
+	for neuronIndex, neuron := range network.hiddenLayer.Neurons() {
 		// Since the total error is a summation of errors in each output neuron's output, we need to calculate the
 		// derivative of error in each output neuron with respect to the output of each hidden neuron and add them.
 		// i.e. ∂TotalError/∂HiddenNeuronOutput = ∂Error1/∂HiddenNeuronOutput + ∂Error2/∂HiddenNeuronOutput + ...
 		dErrorWrtOutputOfHiddenNeuron := float64(0)
-		for _, outputNeuron := range network.outputLayer.neurons {
+		for _, outputNeuron := range network.outputLayer.Neurons() {
 			// The partial derivative of an output neuron's output's error with respect to the output of the hidden neuron can be expressed as:
 			// ∂Error/∂HiddenNeuronOutput = ∂Error/∂TotalNetInputToOutputNeuron * ∂TotalNetInputToOutputNeuron/∂HiddenNeuronOutput
 			//
@@ -191,11 +193,11 @@ func (network *NeuralNetwork) calculateNewHiddenLayerWeights() {
 // updateWeights updates the weights and biases for the hidden and output layer
 // neurons with the new weights and biases.
 func (network *NeuralNetwork) updateWeights() {
-	for _, neuron := range network.outputLayer.neurons {
+	for _, neuron := range network.outputLayer.Neurons() {
 		neuron.UpdateWeightsAndBias()
 	}
 
-	for _, neuron := range network.hiddenLayer.neurons {
+	for _, neuron := range network.hiddenLayer.Neurons() {
 		neuron.UpdateWeightsAndBias()
 	}
 }
@@ -214,7 +216,7 @@ func (network *NeuralNetwork) CalculateTotalError(trainingSet [][][]float64) flo
 // CalculateError function generates the error value for the given target output against the network's last output.
 func (network *NeuralNetwork) CalculateError(targetOutput []float64) float64 {
 	error := float64(0)
-	for index, neuron := range network.outputLayer.neurons {
+	for index, neuron := range network.outputLayer.Neurons() {
 		error += neuron.CalculateError(targetOutput[index])
 	}
 	return error
@@ -222,8 +224,8 @@ func (network *NeuralNetwork) CalculateError(targetOutput []float64) float64 {
 
 // Describe function prints the current state of the neural network and its components.
 func (network *NeuralNetwork) Describe() {
-	fmt.Println(fmt.Sprintf("Hidden Layer: (No of neurons: %v)", len(network.hiddenLayer.neurons)))
-	network.hiddenLayer.describe()
-	fmt.Println(fmt.Sprintf("\nOutput Layer: (No of neurons: %v)", len(network.outputLayer.neurons)))
-	network.outputLayer.describe()
+	fmt.Println(fmt.Sprintf("Hidden Layer: (No of neurons: %v)", len(network.hiddenLayer.Neurons())))
+	network.hiddenLayer.Describe()
+	fmt.Println(fmt.Sprintf("\nOutput Layer: (No of neurons: %v)", len(network.outputLayer.Neurons())))
+	network.outputLayer.Describe()
 }
