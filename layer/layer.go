@@ -27,7 +27,7 @@ func New(numberOfNeurons, numberOfNeuronsInPreviousLayer int) (*Layer, error) {
 
 		neuron, err := neuron.New(weights, bias)
 		if err != nil {
-			return nil, fmt.Errorf("error creating a neuron: %v", err)
+			return nil, fmt.Errorf("error creating layer: \n%v", err)
 		}
 		neurons = append(neurons, neuron)
 	}

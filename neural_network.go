@@ -27,12 +27,12 @@ func NewNeuralNetwork(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int
 
 	hiddenLayer, err := layer.New(numberOfHiddenNeurons, numberOfInputs)
 	if err != nil {
-		return nil, fmt.Errorf("error creating a hidden layer: %v", err)
+		return nil, fmt.Errorf("unable to create neural network: \n%v", err)
 	}
 
 	outputLayer, err := layer.New(numberOfOutputs, numberOfHiddenNeurons)
 	if err != nil {
-		return nil, fmt.Errorf("error creating output layer: %v", err)
+		return nil, fmt.Errorf("unable to create neural network: %v", err)
 	}
 
 	return &NeuralNetwork{
