@@ -120,6 +120,12 @@ func (n *Neuron) squash() float64 {
 		} else {
 			return n.netInput
 		}
+	} else if n.activation.Name() == "LEAKY_RELU" {
+		if n.netInput < 0 {
+			return 0.01 * n.netInput
+		} else {
+			return n.netInput
+		}
 	}
 	return 0
 }
@@ -171,6 +177,12 @@ func (n *Neuron) CalculateDerivativeOutputWrtTotalNetInput() float64 {
 	} else if n.activation.Name() == "RELU" {
 		if n.netInput < 0 {
 			return 0
+		} else {
+			return 1
+		}
+	} else if n.activation.Name() == "LEAKY_RELU" {
+		if n.netInput < 0 {
+			return 0.01
 		} else {
 			return 1
 		}
