@@ -26,7 +26,8 @@ func (n *Neuron) String() string {
 	weights: %v,
 	bias: %v,
 	activation: %v,
-}`, n.weights, n.bias, n.activation)
+}
+`, n.weights, n.bias, n.activation.Name())
 }
 
 func New(weights []float64, bias float64, activationService *activation.Service) (*Neuron, error) {
