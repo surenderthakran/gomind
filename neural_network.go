@@ -303,7 +303,7 @@ func (network *NeuralNetwork) Describe(showNeurons bool) {
 	if showNeurons == true {
 		network.hiddenLayer.Describe()
 	}
-	fmt.Println(fmt.Sprintf("Output Layer: (No of neurons: %v, Activation Function: %v))", len(network.outputLayer.Neurons()), network.hiddenLayer.Activation().Name()))
+	fmt.Println(fmt.Sprintf("Output Layer: (No of neurons: %v, Activation Function: %v))", len(network.outputLayer.Neurons()), network.outputLayer.Activation().Name()))
 	if showNeurons == true {
 		network.outputLayer.Describe()
 	}

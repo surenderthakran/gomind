@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	activationFunctions = []string{"SIGMOID", "RELU"}
+	activationFunctions = []string{"SIGMOID", "RELU", "LEAKY_RELU"}
 )
 
 type Service struct {
@@ -20,7 +20,7 @@ func New(name string) (*Service, error) {
 			name: name,
 		}, nil
 	}
-	return nil, fmt.Errorf("invalid activation function: %v", name)
+	return nil, fmt.Errorf("invalid activation function: %v. Activation Functions should be amongst: %v", name, activationFunctions)
 }
 
 func (s *Service) Name() string {
