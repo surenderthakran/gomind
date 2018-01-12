@@ -1,20 +1,21 @@
 package activation
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-type Name int
-
-const (
-	SIGMOID Name = iota
+var (
+	activationFunctions = []string{"SIGMOID", "RELU"}
 )
 
 type Service struct {
-	name Name
+	name string
 }
 
-func New(name Name) (*Service, error) {
-	switch name {
-	case SIGMOID:
+func New(name string) (*Service, error) {
+	name = strings.Replace(strings.TrimSpace(strings.ToUpper(name)), " ", "", -1)
+	if supportedFunction(name) {
 		return &Service{
 			name: name,
 		}, nil
@@ -22,6 +23,15 @@ func New(name Name) (*Service, error) {
 	return nil, fmt.Errorf("invalid activation function: %v", name)
 }
 
-func (s *Service) Name() Name {
+func (s *Service) Name() string {
 	return s.name
+}
+
+func supportedFunction(name string) bool {
+	for _, functionName := range activationFunctions {
+		if functionName == name {
+			return true
+		}
+	}
+	return false
 }

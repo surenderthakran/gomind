@@ -2,44 +2,118 @@
 package gomind
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
+	"github.com/surenderthakran/gomind/activation"
 	"github.com/surenderthakran/gomind/layer"
 )
 
 // NeuralNetwork describes a single hidden layer MLP feed forward neural network.
 type NeuralNetwork struct {
-	numberOfInputs int
-	hiddenLayer    *layer.Layer
-	outputLayer    *layer.Layer
+	model       *ModelConfiguration
+	hiddenLayer *layer.Layer
+	outputLayer *layer.Layer
+}
+
+type ModelConfiguration struct {
+	NumberOfInputs                    int
+	NumberOfOutputs                   int
+	ModelType                         string
+	NumberOfHiddenLayerNeurons        int
+	HiddenLayerActivationFunctionName string
+	OutputLayerActivationFunctionName string
 }
 
 const (
 	learningRate = 0.5
 )
 
-// NewNeuralNetwork function returns a new NeuralNetwork object.
-func NewNeuralNetwork(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int) (*NeuralNetwork, error) {
+func New(model *ModelConfiguration) (*NeuralNetwork, error) {
+	fmt.Println("Initializing new Neural Network!")
 	// setting timestamp as seed for random number generator.
 	rand.Seed(time.Now().UnixNano())
 
-	hiddenLayer, err := layer.New(numberOfHiddenNeurons, numberOfInputs)
-	if err != nil {
-		return nil, fmt.Errorf("unable to create neural network: \n%v", err)
+	if model.NumberOfInputs == 0 {
+		return nil, errors.New("NumberOfInputs field in ModelConfiguration is a mandatory field which cannot be zero.")
 	}
 
-	outputLayer, err := layer.New(numberOfOutputs, numberOfHiddenNeurons)
-	if err != nil {
-		return nil, fmt.Errorf("unable to create neural network: %v", err)
+	if model.NumberOfOutputs == 0 {
+		return nil, errors.New("NumberOfOutputs field in ModelConfiguration is a mandatory field which cannot be zero.")
 	}
 
-	return &NeuralNetwork{
-		numberOfInputs: numberOfInputs,
-		hiddenLayer:    hiddenLayer,
-		outputLayer:    outputLayer,
-	}, nil
+	modelType := strings.Replace(strings.TrimSpace(strings.ToLower(model.ModelType)), " ", "", -1)
+	if modelType == "regression" {
+		fmt.Println("Configuring Neural network for Regression model")
+
+		numberOfHiddenNeurons := model.NumberOfHiddenLayerNeurons
+		if numberOfHiddenNeurons == 0 {
+			numberOfHiddenNeurons = estimateIdealNumberOfHiddenLayerNeurons(model.NumberOfInputs, model.NumberOfOutputs)
+			fmt.Println("Estimated Ideal Number Of Hidden Layer Neurons: ", numberOfHiddenNeurons)
+		}
+
+		hiddenLayerActivationFunctionName := model.HiddenLayerActivationFunctionName
+		if hiddenLayerActivationFunctionName == "" {
+			hiddenLayerActivationFunctionName = "RELU"
+			fmt.Println("Estimated Ideal Activation Function for Hidden Layer Neurons: ", hiddenLayerActivationFunctionName)
+		}
+		hiddenLayerActivationService, err := activation.New(hiddenLayerActivationFunctionName)
+		if err != nil {
+			return nil, fmt.Errorf("invalid activation function: %v", err)
+		}
+
+		hiddenLayer, err := layer.New(numberOfHiddenNeurons, model.NumberOfInputs, hiddenLayerActivationService)
+		if err != nil {
+			return nil, fmt.Errorf("unable to create neural network: %v", err)
+		}
+
+		outputLayerActivationFunctionName := model.OutputLayerActivationFunctionName
+		if outputLayerActivationFunctionName == "" {
+			outputLayerActivationFunctionName = "SIGMOID"
+			fmt.Println("Estimated Ideal Activation Function for Output Layer Neurons: ", outputLayerActivationFunctionName)
+		}
+		outputLayerActivationService, err := activation.New(outputLayerActivationFunctionName)
+		if err != nil {
+			return nil, fmt.Errorf("invalid activation function: %v", err)
+		}
+
+		outputLayer, err := layer.New(model.NumberOfOutputs, numberOfHiddenNeurons, outputLayerActivationService)
+		if err != nil {
+			return nil, fmt.Errorf("unable to create neural network: %v", err)
+		}
+
+		return &NeuralNetwork{
+			model:       model,
+			hiddenLayer: hiddenLayer,
+			outputLayer: outputLayer,
+		}, nil
+	} else if modelType == "classification" {
+		// TODO(surenderthakran): support auto-configuration for classification type neural network models.
+		return nil, errors.New("We don't support classification type neural network models yet but hope to soon catch up on it.")
+	}
+
+	return nil, errors.New("invalid neural network model type. model should be either \"regresion\" or \"classification\".")
+}
+
+// estimateIdealNumberOfHiddenLayerNeurons function attempts to estimate the ideal number of neural networks in the hidden layer
+// of the network for a given number of inputs and outputs.
+func estimateIdealNumberOfHiddenLayerNeurons(numberOfInputs, numberOfOutputs int) int {
+	var possibleResults []int
+	twoThirdRule := ((numberOfInputs * 2) / 3) + numberOfOutputs
+	possibleResults = append(possibleResults, twoThirdRule)
+	if len(possibleResults) == 1 && possibleResults[0] < 2*numberOfInputs {
+		if numberOfInputs < numberOfOutputs && numberOfInputs <= possibleResults[0] && possibleResults[0] <= numberOfOutputs {
+			return possibleResults[0]
+		} else if numberOfOutputs < numberOfInputs && numberOfOutputs <= possibleResults[0] && possibleResults[0] <= numberOfInputs {
+			return possibleResults[0]
+		} else if numberOfOutputs == numberOfInputs {
+			return possibleResults[0]
+		}
+	}
+	return numberOfInputs
 }
 
 // CalculateOutput function returns the output array from the neural network for the given
@@ -224,6 +298,7 @@ func (network *NeuralNetwork) CalculateError(targetOutput []float64) float64 {
 
 // Describe function prints the current state of the neural network and its components.
 func (network *NeuralNetwork) Describe() {
+	fmt.Println(fmt.Sprintf("Input Layer: (No of nodes: %v)", network.model.NumberOfInputs))
 	fmt.Println(fmt.Sprintf("Hidden Layer: (No of neurons: %v)", len(network.hiddenLayer.Neurons())))
 	network.hiddenLayer.Describe()
 	fmt.Println(fmt.Sprintf("\nOutput Layer: (No of neurons: %v)", len(network.outputLayer.Neurons())))
