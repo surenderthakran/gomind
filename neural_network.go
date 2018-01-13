@@ -14,9 +14,10 @@ import (
 
 // NeuralNetwork describes a single hidden layer MLP feed forward neural network.
 type NeuralNetwork struct {
-	model       *ModelConfiguration
-	hiddenLayer *layer.Layer
-	outputLayer *layer.Layer
+	model        *ModelConfiguration
+	learningRate float64
+	hiddenLayer  *layer.Layer
+	outputLayer  *layer.Layer
 }
 
 type ModelConfiguration struct {
@@ -24,13 +25,10 @@ type ModelConfiguration struct {
 	NumberOfOutputs                   int
 	ModelType                         string
 	NumberOfHiddenLayerNeurons        int
+	LearningRate                      float64
 	HiddenLayerActivationFunctionName string
 	OutputLayerActivationFunctionName string
 }
-
-const (
-	learningRate = 0.5
-)
 
 func New(model *ModelConfiguration) (*NeuralNetwork, error) {
 	fmt.Println("Initializing new Neural Network!")
@@ -43,6 +41,14 @@ func New(model *ModelConfiguration) (*NeuralNetwork, error) {
 
 	if model.NumberOfOutputs == 0 {
 		return nil, errors.New("NumberOfOutputs field in ModelConfiguration is a mandatory field which cannot be zero.")
+	}
+
+	learningRate := 0.5
+	if model.LearningRate != 0 {
+		if model.LearningRate < 0 || model.LearningRate > 1 {
+			return nil, errors.New("LearningRate cannot be less than 0 or greater than 1.")
+		}
+		learningRate = model.LearningRate
 	}
 
 	modelType := strings.Replace(strings.TrimSpace(strings.ToLower(model.ModelType)), " ", "", -1)
@@ -86,9 +92,10 @@ func New(model *ModelConfiguration) (*NeuralNetwork, error) {
 		}
 
 		return &NeuralNetwork{
-			model:       model,
-			hiddenLayer: hiddenLayer,
-			outputLayer: outputLayer,
+			model:        model,
+			learningRate: learningRate,
+			hiddenLayer:  hiddenLayer,
+			outputLayer:  outputLayer,
 		}, nil
 	} else if modelType == "classification" {
 		// TODO(surenderthakran): support auto-configuration for classification type neural network models.
@@ -174,7 +181,7 @@ func (network *NeuralNetwork) calculateNewOutputLayerWeights(outputs, targetOutp
 			// by subtracting the affect from the current weight after multiplying it with the learning rate.
 			// The learning rate is a constant value chosen for a network to control the correction in
 			// a network's weight based on a sample.
-			neuron.SetNewWeight(weight-(learningRate*pdErrorWrtWeight), weightIndex)
+			neuron.SetNewWeight(weight-(network.learningRate*pdErrorWrtWeight), weightIndex)
 		}
 
 		// By applying the chain rule, we can define the partial differential of total error with respect to the bias to the output neuron as:
@@ -191,7 +198,7 @@ func (network *NeuralNetwork) calculateNewOutputLayerWeights(outputs, targetOutp
 		// by subtracting the affect from the current bias after multiplying it with the learning rate.
 		// The learning rate is a constant value chosen for a network to control the correction in
 		// a network's bias based on a sample.
-		neuron.SetNewBias(neuron.Bias() - (learningRate * pdErrorWrtBias))
+		neuron.SetNewBias(neuron.Bias() - (network.learningRate * pdErrorWrtBias))
 	}
 }
 
@@ -243,7 +250,7 @@ func (network *NeuralNetwork) calculateNewHiddenLayerWeights() {
 			// by subtracting the affect from the current weight after multiplying it with the learning rate.
 			// The learning rate is a constant value chosen for a network to control the correction in
 			// a network's weight based on a sample.
-			neuron.SetNewWeight(weight-(learningRate*pdErrorWrtWeight), weightIndex)
+			neuron.SetNewWeight(weight-(network.learningRate*pdErrorWrtWeight), weightIndex)
 		}
 
 		// By applying the chain rule, we can define the partial differential of total error with respect to the bias to the hidden neuron as:
@@ -260,7 +267,7 @@ func (network *NeuralNetwork) calculateNewHiddenLayerWeights() {
 		// by subtracting the affect from the current bias after multiplying it with the learning rate.
 		// The learning rate is a constant value chosen for a network to control the correction in
 		// a network's bias based on a sample.
-		neuron.SetNewBias(neuron.Bias() - (learningRate * pdErrorWrtBias))
+		neuron.SetNewBias(neuron.Bias() - (network.learningRate * pdErrorWrtBias))
 	}
 }
 
