@@ -57,7 +57,7 @@ func New(model *ModelConfiguration) (*NeuralNetwork, error) {
 
 		hiddenLayerActivationFunctionName := model.HiddenLayerActivationFunctionName
 		if hiddenLayerActivationFunctionName == "" {
-			hiddenLayerActivationFunctionName = "RELU"
+			hiddenLayerActivationFunctionName = "LEAKY_RELU"
 			fmt.Println("Estimated Ideal Activation Function for Hidden Layer Neurons: ", hiddenLayerActivationFunctionName)
 		}
 		hiddenLayerActivationService, err := activation.New(hiddenLayerActivationFunctionName)
