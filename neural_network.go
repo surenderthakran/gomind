@@ -4,6 +4,7 @@ package gomind
 import (
 	"errors"
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -284,12 +285,18 @@ func (network *NeuralNetwork) updateWeights() {
 }
 
 // CalculateError function generates the error value for the given target output against the network's last output.
-func (network *NeuralNetwork) CalculateError(targetOutput []float64) float64 {
-	error := float64(0)
+func (network *NeuralNetwork) CalculateError(targetOutput []float64) (float64, error) {
+	outputError := float64(0)
 	for index, neuron := range network.outputLayer.Neurons() {
-		error += neuron.CalculateError(targetOutput[index])
+		outputError += neuron.CalculateError(targetOutput[index])
 	}
-	return error
+	if math.IsInf(outputError, 1) || math.IsInf(outputError, -1) {
+		return outputError, errors.New("error in the output is too high.")
+	}
+	if math.IsNaN(outputError) {
+		return outputError, errors.New("error in the output is NaN.")
+	}
+	return outputError, nil
 }
 
 // Describe function prints the current state of the neural network and its components.
