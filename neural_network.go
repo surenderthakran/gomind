@@ -283,17 +283,6 @@ func (network *NeuralNetwork) updateWeights() {
 	}
 }
 
-// CalculateTotalError computes and returns the total error for the given training set.
-func (network *NeuralNetwork) CalculateTotalError(trainingSet [][][]float64) float64 {
-	totalError := float64(0)
-	for _, set := range trainingSet {
-		output := network.CalculateOutput(set[0])
-		_ = output // we don't need output here.
-		totalError += network.CalculateError(set[1])
-	}
-	return totalError
-}
-
 // CalculateError function generates the error value for the given target output against the network's last output.
 func (network *NeuralNetwork) CalculateError(targetOutput []float64) float64 {
 	error := float64(0)
