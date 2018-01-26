@@ -14,8 +14,8 @@ type Service struct {
 }
 
 func New(name string) (*Service, error) {
-	name = strings.Replace(strings.TrimSpace(strings.ToUpper(name)), " ", "", -1)
-	if supportedFunction(name) {
+	name = ValidFunction(name)
+	if name != "" {
 		return &Service{
 			name: name,
 		}, nil
@@ -27,11 +27,16 @@ func (s *Service) Name() string {
 	return s.name
 }
 
-func supportedFunction(name string) bool {
+func SupportedActivationFunctions() []string {
+	return activationFunctions
+}
+
+func ValidFunction(name string) string {
+	name = strings.Replace(strings.TrimSpace(strings.ToUpper(name)), " ", "", -1)
 	for _, functionName := range activationFunctions {
 		if functionName == name {
-			return true
+			return functionName
 		}
 	}
-	return false
+	return ""
 }
