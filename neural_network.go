@@ -313,6 +313,7 @@ func (network *NeuralNetwork) CalculateError(targetOutput []float64) (float64, e
 	for index, neuron := range network.outputLayer.Neurons() {
 		outputError += neuron.CalculateError(targetOutput[index])
 	}
+	outputError = outputError / float64(len(network.outputLayer.Neurons()))
 	if math.IsInf(outputError, 1) || math.IsInf(outputError, -1) || math.IsNaN(outputError) {
 		return outputError, fmt.Errorf("invalid error value: %v in output.", outputError)
 	}

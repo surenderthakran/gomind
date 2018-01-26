@@ -208,5 +208,5 @@ func (n *Neuron) CalculatePdTotalNetInputWrtWeight(index int) float64 {
 }
 
 func (n *Neuron) CalculateError(targetOutput float64) float64 {
-	return 0.5 * math.Pow(targetOutput-n.output, 2)
+	return math.Pow(targetOutput-n.output, 2)
 }
