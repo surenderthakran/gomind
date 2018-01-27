@@ -126,7 +126,7 @@ func (n *Neuron) squash() float64 {
 		} else {
 			return n.netInput
 		}
-	} else if n.activation.Name() == "IDENTITY" {
+	} else if n.activation.Name() == "LINEAR" {
 		return n.netInput
 	}
 	return 0
@@ -188,7 +188,7 @@ func (n *Neuron) CalculateDerivativeOutputWrtTotalNetInput() float64 {
 		} else {
 			return 1
 		}
-	} else if n.activation.Name() == "IDENTITY" {
+	} else if n.activation.Name() == "LINEAR" {
 		return 1
 	}
 	return 0

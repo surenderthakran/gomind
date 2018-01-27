@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	activationFunctions = []string{"SIGMOID", "RELU", "LEAKY_RELU", "IDENTITY"}
+	activationFunctions = []string{"SIGMOID", "RELU", "LEAKY_RELU", "LINEAR"}
 )
 
 type Service struct {
