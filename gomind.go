@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/surenderthakran/gomind/activation"
@@ -23,24 +22,18 @@ type Model struct {
 	hiddenLayerActivationFunctionName string
 	numberOfOutputs                   int
 	outputLayerActivationFunctionName string
-	modelType                         string
 	learningRate                      float64
 	network                           *network.NeuralNetwork
 }
 
 type ModelConfiguration struct {
-	NumberOfInputs                    int    // mandatory
-	NumberOfOutputs                   int    // mandatory
-	ModelType                         string // mandatory
+	NumberOfInputs                    int // mandatory
+	NumberOfOutputs                   int // mandatory
 	NumberOfHiddenLayerNeurons        int
 	LearningRate                      float64
 	HiddenLayerActivationFunctionName string
 	OutputLayerActivationFunctionName string
 }
-
-var (
-	modelTypes = []string{"REGRESSION"}
-)
 
 // LearnSample function trains the neural network using the given input/output sample.
 func (model *Model) LearnSample(input, output []float64) error {
@@ -96,16 +89,6 @@ func estimateIdealNumberOfHiddenLayerNeurons(numberOfInputs, numberOfOutputs int
 	return numberOfInputs
 }
 
-func validModelType(name string) string {
-	name = strings.Replace(strings.TrimSpace(strings.ToUpper(name)), " ", "", -1)
-	for _, modelType := range modelTypes {
-		if modelType == name {
-			return modelType
-		}
-	}
-	return ""
-}
-
 func New(configuration *ModelConfiguration) (*Model, error) {
 	fmt.Println("Initializing new Neural Network!")
 	// setting timestamp as seed for random number generator.
@@ -122,11 +105,6 @@ func New(configuration *ModelConfiguration) (*Model, error) {
 		return nil, errors.New("NumberOfOutputs field in ModelConfiguration is a mandatory field which cannot be zero.")
 	}
 	model.numberOfOutputs = configuration.NumberOfOutputs
-
-	model.modelType = validModelType(configuration.ModelType)
-	if model.modelType == "" {
-		return nil, fmt.Errorf("invalid neural network model type: %v. Model type should be amongst: %v", configuration.ModelType, modelTypes)
-	}
 
 	model.learningRate = 0.5
 	if configuration.LearningRate != 0 {
