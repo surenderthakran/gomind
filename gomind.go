@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	DEFAULT_HIDDEN_LAYER_ACTIVATION_FUNCTION_REGRESSION = "LEAKY_RELU"
-	DEFAULT_OUTPUT_LAYER_ACTIVATION_FUNCTION_REGRESSION = "SIGMOID"
+	DEFAULT_ACTIVATION_FUNCTION = "LINEAR"
 )
 
 type Model struct {
@@ -122,13 +121,13 @@ func New(configuration *ModelConfiguration) (*Model, error) {
 
 	model.hiddenLayerActivationFunctionName = activation.ValidFunction(configuration.HiddenLayerActivationFunctionName)
 	if model.hiddenLayerActivationFunctionName == "" {
-		model.hiddenLayerActivationFunctionName = DEFAULT_HIDDEN_LAYER_ACTIVATION_FUNCTION_REGRESSION
+		model.hiddenLayerActivationFunctionName = DEFAULT_ACTIVATION_FUNCTION
 		fmt.Println("Estimated Ideal Activation Function for Hidden Layer Neurons: ", model.hiddenLayerActivationFunctionName)
 	}
 
 	model.outputLayerActivationFunctionName = activation.ValidFunction(configuration.OutputLayerActivationFunctionName)
 	if model.hiddenLayerActivationFunctionName == "" {
-		model.outputLayerActivationFunctionName = DEFAULT_OUTPUT_LAYER_ACTIVATION_FUNCTION_REGRESSION
+		model.outputLayerActivationFunctionName = DEFAULT_ACTIVATION_FUNCTION
 		fmt.Println("Estimated Ideal Activation Function for Output Layer Neurons: ", model.outputLayerActivationFunctionName)
 	}
 
@@ -137,6 +136,9 @@ func New(configuration *ModelConfiguration) (*Model, error) {
 		return nil, fmt.Errorf("error creating a neural network: %v", err)
 	}
 	model.network = neuralNetwork
+
+	fmt.Println("Successfully created the following model:")
+	model.Describe(false)
 
 	return model, nil
 }
