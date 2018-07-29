@@ -9,6 +9,20 @@
 go get github.com/surenderthakran/gomind
 ```
 
+## About
+GoMind is a neural network library written entirely in Go.
+It only supports a single hidden layer (for now).
+The network learns from a training set using back-propagation algorithm.
+
+Some of the salient features of GoMind are:
+- Supports following activation functions:
+  - Linear (Default)
+  - Sigmoid
+  - ReLU
+  - Leaky ReLU
+- Smartly estimates ideal number of hidden layer neurons (if a count is not given during model configuration) for given input and output sizes.
+- Uses Mean Squared Error function to calculate error while back propagating.
+
 ## Usage
 ```
 package main
