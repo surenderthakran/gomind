@@ -1,5 +1,7 @@
 # GoMind
 
+[![GoDoc](https://godoc.org/github.com/surenderthakran/gomind?status.png)](https://godoc.org/github.com/surenderthakran/gomind)
+
 ## Installation
 ```
 go get github.com/surenderthakran/gomind
