@@ -17,11 +17,13 @@ The network learns from a training set using back-propagation algorithm.
 Some of the salient features of GoMind are:
 - Supports following activation functions:
   - Linear (Default)
-  - Sigmoid
-  - ReLU
-  - Leaky ReLU
+  - [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function)
+  - [ReLU](https://en.wikipedia.org/wiki/Rectifier_(neural_networks))
+  - [Leaky ReLU](https://en.wikipedia.org/wiki/Rectifier_%28neural_networks%29#Leaky_ReLUs)
 - Smartly estimates ideal number of hidden layer neurons (if a count is not given during model configuration) for given input and output sizes.
-- Uses Mean Squared Error function to calculate error while back propagating.
+- Uses [Mean Squared Error function](https://en.wikipedia.org/wiki/Mean_squared_error) to calculate error while back propagating.
+
+Note: To understand the basic understanding of back-propagation in neural networks, one can refer to my blog [here](https://www.surenderthakran.com/articles/tech/implement-back-propagation-neural-network).
 
 ## Usage
 ```
