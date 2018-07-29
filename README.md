@@ -2,6 +2,8 @@
 
 [![GoDoc](https://godoc.org/github.com/surenderthakran/gomind?status.png)](https://godoc.org/github.com/surenderthakran/gomind)
 
+<img src="https://golang.org/doc/gopher/fiveyears.jpg" width=800><br>
+
 ## Installation
 ```
 go get github.com/surenderthakran/gomind
