@@ -7,6 +7,7 @@ import (
 	"github.com/surenderthakran/gomind/activation"
 )
 
+// Neuron type defines a neuron in the neural network.
 type Neuron struct {
 	activation *activation.Service
 	inputs     []float64
@@ -30,6 +31,7 @@ func (n *Neuron) String() string {
 `, n.weights, n.bias, n.activation.Name())
 }
 
+// New creates a new neuron for the neural network.
 func New(weights []float64, bias float64, activationService *activation.Service) (*Neuron, error) {
 	if len(weights) == 0 {
 		return nil, fmt.Errorf("unable to create neuron without any weights")
@@ -111,21 +113,18 @@ func (n *Neuron) squash() float64 {
 			return 0
 		} else if n.netInput > 45 {
 			return 1
-		} else {
-			return 1.0 / (1.0 + math.Exp(-n.netInput))
 		}
+		return 1.0 / (1.0 + math.Exp(-n.netInput))
 	} else if n.activation.Name() == "RELU" {
 		if n.netInput < 0 {
 			return 0
-		} else {
-			return n.netInput
 		}
+		return n.netInput
 	} else if n.activation.Name() == "LEAKY_RELU" {
 		if n.netInput < 0 {
 			return 0.01 * n.netInput
-		} else {
-			return n.netInput
 		}
+		return n.netInput
 	} else if n.activation.Name() == "LINEAR" {
 		return n.netInput
 	}
@@ -207,6 +206,7 @@ func (n *Neuron) CalculatePdTotalNetInputWrtWeight(index int) float64 {
 	return n.inputs[index]
 }
 
+// CalculateError returns the error in the last output of the neuron.
 func (n *Neuron) CalculateError(targetOutput float64) float64 {
 	return math.Pow(targetOutput-n.output, 2)
 }

@@ -8,11 +8,13 @@ import (
 	"github.com/surenderthakran/gomind/neuron"
 )
 
+// Layer type defines a neuron layer in the neural network.
 type Layer struct {
 	neurons    []*neuron.Neuron
 	activation *activation.Service
 }
 
+// New creates a new neuron layer for the neural network .
 func New(numberOfNeurons, numberOfNeuronsInPreviousLayer int, activationService *activation.Service) (*Layer, error) {
 	if numberOfNeurons <= 0 {
 		return nil, fmt.Errorf("%d is not a valid number of neurons", numberOfNeurons)

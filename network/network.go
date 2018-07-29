@@ -31,10 +31,12 @@ func (network *NeuralNetwork) LastOutput() []float64 {
 	return output
 }
 
+// HiddenLayer returns a pointer to the network's hidden layer.
 func (network *NeuralNetwork) HiddenLayer() *layer.Layer {
 	return network.hiddenLayer
 }
 
+// OutputLayer returns a pointer to the network's output layer.
 func (network *NeuralNetwork) OutputLayer() *layer.Layer {
 	return network.outputLayer
 }
@@ -206,6 +208,7 @@ func (network *NeuralNetwork) CalculateError(targetOutput []float64) (float64, e
 	return outputError, nil
 }
 
+// New creates a new neural network.
 func New(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int, learningRate float64, hiddenLayerActivationFunctionName, outputLayerActivationFunctionName string) (*NeuralNetwork, error) {
 	hiddenLayerActivationService, err := activation.New(hiddenLayerActivationFunctionName)
 	if err != nil {

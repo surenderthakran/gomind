@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	DEFAULT_ACTIVATION_FUNCTION = "LINEAR"
+	defaultActivationFunction = "LINEAR"
 )
 
+// Model type defines the neural network's architecture and metadata.
 type Model struct {
 	numberOfInputs                    int
 	numberOfHiddenNeurons             int
@@ -25,6 +26,7 @@ type Model struct {
 	network                           *network.NeuralNetwork
 }
 
+// ModelConfiguration type defines the network configuration template filled by external code while creating a new model.
 type ModelConfiguration struct {
 	NumberOfInputs                    int // mandatory
 	NumberOfOutputs                   int // mandatory
@@ -88,6 +90,7 @@ func estimateIdealNumberOfHiddenLayerNeurons(numberOfInputs, numberOfOutputs int
 	return numberOfInputs
 }
 
+// New is used to create a new GoMind network model.
 func New(configuration *ModelConfiguration) (*Model, error) {
 	fmt.Println("Initializing new Neural Network!")
 	// setting timestamp as seed for random number generator.
@@ -121,13 +124,13 @@ func New(configuration *ModelConfiguration) (*Model, error) {
 
 	model.hiddenLayerActivationFunctionName = activation.ValidFunction(configuration.HiddenLayerActivationFunctionName)
 	if model.hiddenLayerActivationFunctionName == "" {
-		model.hiddenLayerActivationFunctionName = DEFAULT_ACTIVATION_FUNCTION
+		model.hiddenLayerActivationFunctionName = defaultActivationFunction
 		fmt.Println("Estimated Ideal Activation Function for Hidden Layer Neurons: ", model.hiddenLayerActivationFunctionName)
 	}
 
 	model.outputLayerActivationFunctionName = activation.ValidFunction(configuration.OutputLayerActivationFunctionName)
 	if model.hiddenLayerActivationFunctionName == "" {
-		model.outputLayerActivationFunctionName = DEFAULT_ACTIVATION_FUNCTION
+		model.outputLayerActivationFunctionName = defaultActivationFunction
 		fmt.Println("Estimated Ideal Activation Function for Output Layer Neurons: ", model.outputLayerActivationFunctionName)
 	}
 
