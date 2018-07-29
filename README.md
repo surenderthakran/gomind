@@ -1,8 +1,11 @@
+<img src="https://golang.org/doc/gopher/fiveyears.jpg" width=800><br>
+
 # GoMind
 
 [![GoDoc](https://godoc.org/github.com/surenderthakran/gomind?status.png)](https://godoc.org/github.com/surenderthakran/gomind)
-
-<img src="https://golang.org/doc/gopher/fiveyears.jpg" width=800><br>
+[![Go Report Card](https://goreportcard.com/badge/github.com/surenderthakran/gomind)](https://goreportcard.com/report/github.com/surenderthakran/gomind)
+[![Release](https://img.shields.io/github/tag/surenderthakran/gomind.svg?label=latest)](https://github.com/surenderthakran/gomind/releases/tag/v1.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://github.com/singhsurender/gomind/blob/master/LICENSE)
 
 ## Installation
 ```
@@ -23,7 +26,7 @@ Some of the salient features of GoMind are:
 - Smartly estimates ideal number of hidden layer neurons (if a count is not given during model configuration) for given input and output sizes.
 - Uses [Mean Squared Error function](https://en.wikipedia.org/wiki/Mean_squared_error) to calculate error while back propagating.
 
-Note: To understand the basic understanding of back-propagation in neural networks, one can refer to my blog [here](https://www.surenderthakran.com/articles/tech/implement-back-propagation-neural-network).
+Note: To understand the basic functioning of back-propagation in neural networks, one can refer to my blog [here](https://www.surenderthakran.com/articles/tech/implement-back-propagation-neural-network).
 
 ## Usage
 ```
