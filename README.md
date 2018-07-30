@@ -2,6 +2,7 @@
 
 # GoMind
 
+[![Build Status](https://travis-ci.com/surenderthakran/gomind.svg?branch=master)](https://travis-ci.com/surenderthakran/gomind)
 [![GoDoc](https://godoc.org/github.com/surenderthakran/gomind?status.png)](https://godoc.org/github.com/surenderthakran/gomind)
 [![Go Report Card](https://goreportcard.com/badge/github.com/surenderthakran/gomind)](https://goreportcard.com/report/github.com/surenderthakran/gomind)
 [![Release](https://img.shields.io/github/tag/surenderthakran/gomind.svg?label=latest)](https://github.com/surenderthakran/gomind/releases/tag/v0.1-alpha)
