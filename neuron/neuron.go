@@ -178,15 +178,13 @@ func (n *Neuron) CalculateDerivativeOutputWrtTotalNetInput() float64 {
 	} else if n.activation.Name() == "RELU" {
 		if n.netInput < 0 {
 			return 0
-		} else {
-			return 1
 		}
+		return 1
 	} else if n.activation.Name() == "LEAKY_RELU" {
 		if n.netInput < 0 {
 			return 0.01
-		} else {
-			return 1
 		}
+		return 1
 	} else if n.activation.Name() == "LINEAR" {
 		return 1
 	}
