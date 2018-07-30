@@ -109,12 +109,10 @@ func New(configuration *ModelConfiguration) (*Model, error) {
 	model.numberOfOutputs = configuration.NumberOfOutputs
 
 	model.learningRate = 0.5
-	if configuration.LearningRate != 0 {
-		if configuration.LearningRate < 0 || configuration.LearningRate > 1 {
-			return nil, errors.New("LearningRate cannot be less than 0 or greater than 1.")
-		}
-		model.learningRate = configuration.LearningRate
+	if configuration.LearningRate <= 0 || configuration.LearningRate > 1 {
+		return nil, errors.New("LearningRate cannot be less than or equals to 0 or greater than 1.")
 	}
+	model.learningRate = configuration.LearningRate
 
 	model.numberOfHiddenNeurons = configuration.NumberOfHiddenLayerNeurons
 	if model.numberOfHiddenNeurons == 0 {
