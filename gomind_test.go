@@ -3,7 +3,90 @@ package gomind
 import (
 	"errors"
 	"testing"
+
+	"github.com/surenderthakran/gomind/layer"
+
+	"github.com/google/go-cmp/cmp"
 )
+
+type fakeNeuralNetwork struct{}
+
+func (fakeNeuralNetwork) CalculateOutput(input []float64) []float64 {
+	return []float64{0}
+}
+
+func (fakeNeuralNetwork) LastOutput() []float64 {
+	return []float64{0}
+}
+
+func (fakeNeuralNetwork) HiddenLayer() *layer.Layer {
+	return nil
+}
+
+func (fakeNeuralNetwork) OutputLayer() *layer.Layer {
+	return nil
+}
+
+func (fakeNeuralNetwork) CalculateNewOutputLayerWeights(outputs, targetOutputs []float64) error {
+	return nil
+}
+
+func (fakeNeuralNetwork) CalculateNewHiddenLayerWeights() error {
+	return nil
+}
+
+func (fakeNeuralNetwork) CalculateError(targetOutput []float64) (float64, error) {
+	return 0, nil
+}
+
+func (fakeNeuralNetwork) UpdateWeights() {}
+
+func TestModel(t *testing.T) {
+	model := &Model{
+		numberOfInputs:                    2,
+		numberOfHiddenNeurons:             16,
+		hiddenLayerActivationFunctionName: "RELU",
+		numberOfOutputs:                   1,
+		outputLayerActivationFunctionName: "SIGMOID",
+		learningRate:                      0.5,
+		network:                           &fakeNeuralNetwork{},
+	}
+
+	t.Run("LastOutput", func(t *testing.T) {
+		lastOutput := model.LastOutput()
+
+		if !cmp.Equal([]float64{0}, lastOutput) {
+			t.Errorf("Model.LastOutput() = %d, want %d", lastOutput, []float64{0})
+		}
+	})
+}
+
+func TestEstimateIdealNumberOfHiddenLayerNeurons(t *testing.T) {
+	testCases := []struct {
+		inputs  int
+		outputs int
+		want    int
+	}{
+		{
+			inputs:  2,
+			outputs: 1,
+			want:    2,
+		},
+		{
+			inputs:  20,
+			outputs: 1,
+			want:    14,
+		},
+	}
+
+	for _, test := range testCases {
+		hidden := estimateIdealNumberOfHiddenLayerNeurons(test.inputs, test.outputs)
+
+		if hidden != test.want {
+			t.Errorf("estimateIdealNumberOfHiddenLayerNeurons(%d, %d) = %d, want %d", test.inputs, test.outputs, hidden, test.want)
+		}
+	}
+}
 
 func TestNew(t *testing.T) {
 	testCases := []struct {
@@ -28,9 +111,17 @@ func TestNew(t *testing.T) {
 			modelConfig: &ModelConfiguration{
 				NumberOfInputs:  2,
 				NumberOfOutputs: 1,
-				LearningRate:    0,
+				LearningRate:    1.5,
 			},
-			err: errors.New("LearningRate cannot be less than or equals to 0 or greater than 1."),
+			err: errors.New("LearningRate cannot be less than 0 or greater than 1."),
+		},
+		{
+			modelConfig: &ModelConfiguration{
+				NumberOfInputs:  2,
+				NumberOfOutputs: 1,
+				LearningRate:    0.5,
+			},
+			err: nil,
 		},
 		{
 			modelConfig: &ModelConfiguration{
