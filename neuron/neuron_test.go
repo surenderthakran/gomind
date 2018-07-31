@@ -111,7 +111,7 @@ func TestNeuron(t *testing.T) {
 		bias := neuron.Bias()
 
 		if bias != neuron.bias {
-			t.Errorf("Neuron.Bias() = %d, want: %d", bias, neuron.bias)
+			t.Errorf("Neuron.Bias() = %f, want: %f", bias, neuron.bias)
 		}
 	})
 
