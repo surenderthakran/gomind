@@ -16,6 +16,7 @@ const (
 	defaultActivationFunction = "LINEAR"
 )
 
+// NeuralNetworkInterface defines methods used by gomind from network.NeuralNetwork's type.
 type NeuralNetworkInterface interface {
 	CalculateOutput(input []float64) []float64
 	LastOutput() []float64
