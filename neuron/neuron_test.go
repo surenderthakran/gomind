@@ -46,8 +46,9 @@ func TestNeuron(t *testing.T) {
 			want               float64
 		}{
 			{
-				inputs: []float64{0, 1},
-				want:   0.95,
+				inputs:             []float64{0, 1},
+				activationFunction: "sigmoid",
+				want:               0.95,
 			},
 			{
 				inputs:             []float64{0, 1},
@@ -160,10 +161,42 @@ func TestNeuron(t *testing.T) {
 	})
 
 	t.Run("CalculateDerivativeOutputWrtTotalNetInput", func(t *testing.T) {
-		derivative := neuron.CalculateDerivativeOutputWrtTotalNetInput()
+		testCases := []struct {
+			activationFunction string
+			want               float64
+		}{
+			{
+				activationFunction: "sigmoid",
+				want:               -6.0,
+			},
+			{
+				activationFunction: "relu",
+				want:               1.0,
+			},
+			{
+				activationFunction: "leaky_relu",
+				want:               1.0,
+			},
+			{
+				activationFunction: "linear",
+				want:               1.0,
+			},
+		}
 
-		if derivative != 1.0 {
-			t.Errorf("Neuron.CalculateDerivativeOutputWrtTotalNetInput() = %f, want: %f", derivative, 1.0)
+		for _, test := range testCases {
+			if test.activationFunction != "" {
+				activationService, err := activation.New(test.activationFunction)
+				if err != nil {
+					t.Fatalf("activation.New(%s) -> %v", test.activationFunction, err)
+				}
+				neuron.activation = activationService
+			}
+
+			derivative := neuron.CalculateDerivativeOutputWrtTotalNetInput()
+
+			if derivative != test.want {
+				t.Errorf("Neuron.CalculateDerivativeOutputWrtTotalNetInput() = %f, want: %f. Activation: %s", derivative, test.want, neuron.activation.Name())
+			}
 		}
 	})
 
