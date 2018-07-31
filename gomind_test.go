@@ -52,11 +52,28 @@ func TestModel(t *testing.T) {
 		network:                           &fakeNeuralNetwork{},
 	}
 
+	t.Run("LearnSample", func(t *testing.T) {
+		if err := model.LearnSample([]float64{0}, []float64{0}); err != nil {
+			t.Fatalf("Model.LearnSample(%v) = %v", []float64{0}, err)
+		}
+	})
+
 	t.Run("LastOutput", func(t *testing.T) {
 		lastOutput := model.LastOutput()
 
 		if !cmp.Equal([]float64{0}, lastOutput) {
-			t.Errorf("Model.LastOutput() = %d, want %d", lastOutput, []float64{0})
+			t.Errorf("Model.LastOutput() = %v, want %v", lastOutput, []float64{0})
+		}
+	})
+
+	t.Run("CalculateError", func(t *testing.T) {
+		error, err := model.CalculateError([]float64{0})
+		if err != nil {
+			t.Fatalf("Model.CalculateError(%v) = %v", []float64{0}, err)
+		}
+
+		if error != 0 {
+			t.Errorf("Model.CalculateError(%v) = %v, want %v", []float64{0}, error, 0)
 		}
 	})
 }
@@ -76,6 +93,11 @@ func TestEstimateIdealNumberOfHiddenLayerNeurons(t *testing.T) {
 			inputs:  20,
 			outputs: 1,
 			want:    14,
+		},
+		{
+			inputs:  1,
+			outputs: 5,
+			want:    1,
 		},
 	}
 
@@ -114,6 +136,14 @@ func TestNew(t *testing.T) {
 				LearningRate:    1.5,
 			},
 			err: errors.New("LearningRate cannot be less than 0 or greater than 1."),
+		},
+		{
+			modelConfig: &ModelConfiguration{
+				NumberOfInputs:  2,
+				NumberOfOutputs: 1,
+				LearningRate:    0,
+			},
+			err: nil,
 		},
 		{
 			modelConfig: &ModelConfiguration{
