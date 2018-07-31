@@ -6,7 +6,6 @@
 [![GoDoc](https://godoc.org/github.com/surenderthakran/gomind?status.png)](https://godoc.org/github.com/surenderthakran/gomind)
 [![codecov](https://codecov.io/gh/surenderthakran/gomind/branch/master/graph/badge.svg)](https://codecov.io/gh/surenderthakran/gomind)
 [![Go Report Card](https://goreportcard.com/badge/github.com/surenderthakran/gomind)](https://goreportcard.com/report/github.com/surenderthakran/gomind)
-[![Release](https://img.shields.io/github/tag/surenderthakran/gomind.svg?label=latest)](https://github.com/surenderthakran/gomind/releases/tag/v0.1-alpha)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://github.com/singhsurender/gomind/blob/master/LICENSE)
 
 ## Installation
