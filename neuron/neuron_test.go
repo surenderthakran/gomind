@@ -41,16 +41,39 @@ func TestNeuron(t *testing.T) {
 
 	t.Run("CalculateOutput", func(t *testing.T) {
 		testCases := []struct {
-			inputs []float64
-			want   float64
+			inputs             []float64
+			activationFunction string
+			want               float64
 		}{
 			{
 				inputs: []float64{0, 1},
 				want:   0.95,
 			},
+			{
+				inputs:             []float64{0, 1},
+				activationFunction: "relu",
+				want:               3.00,
+			},
+			{
+				inputs:             []float64{0, 1},
+				activationFunction: "leaky_relu",
+				want:               3.00,
+			},
+			{
+				inputs:             []float64{0, 1},
+				activationFunction: "linear",
+				want:               3.00,
+			},
 		}
 
 		for _, test := range testCases {
+			if test.activationFunction != "" {
+				activationService, err := activation.New(test.activationFunction)
+				if err != nil {
+					t.Fatalf("activation.New(%s) -> %v", test.activationFunction, err)
+				}
+				neuron.activation = activationService
+			}
 			output := neuron.CalculateOutput(test.inputs)
 			output = roundTo(output, 2)
 
@@ -64,7 +87,7 @@ func TestNeuron(t *testing.T) {
 		output := neuron.Output()
 
 		if output != neuron.output {
-			t.Errorf("Neuron.Output() = %f, want: %f", 0, output, neuron.output)
+			t.Errorf("Neuron.Output() = %f, want: %f", output, neuron.output)
 		}
 	})
 
@@ -88,7 +111,7 @@ func TestNeuron(t *testing.T) {
 		bias := neuron.Bias()
 
 		if bias != neuron.bias {
-			t.Errorf("Neuron.Bias() = %f, want: %f", 0, bias, neuron.bias)
+			t.Errorf("Neuron.Bias() = %d, want: %d", bias, neuron.bias)
 		}
 	})
 
@@ -125,6 +148,40 @@ func TestNeuron(t *testing.T) {
 
 		if neuron.bias != 0.4 {
 			t.Errorf("Neuron.UpdateWeightsAndBias(). neuron.bias = %f, want: %f", neuron.bias, 0.4)
+		}
+	})
+
+	t.Run("CalculatePdErrorWrtTotalNetInputOfOutputNeuron", func(t *testing.T) {
+		pdError := neuron.CalculatePdErrorWrtTotalNetInputOfOutputNeuron(1.0)
+
+		if pdError != 2.0 {
+			t.Errorf("Neuron.CalculatePdErrorWrtTotalNetInputOfOutputNeuron(%f) = %f, want: %f", 1.0, pdError, 2.0)
+		}
+	})
+
+	t.Run("CalculateDerivativeOutputWrtTotalNetInput", func(t *testing.T) {
+		derivative := neuron.CalculateDerivativeOutputWrtTotalNetInput()
+
+		if derivative != 1.0 {
+			t.Errorf("Neuron.CalculateDerivativeOutputWrtTotalNetInput() = %f, want: %f", derivative, 1.0)
+		}
+	})
+
+	t.Run("CalculatePdTotalNetInputWrtWeight", func(t *testing.T) {
+		neuron.CalculateOutput([]float64{1, 0})
+		pd := neuron.CalculatePdTotalNetInputWrtWeight(0)
+
+		if pd != 1.0 {
+			t.Errorf("Neuron.CalculatePdTotalNetInputWrtWeight(%d) = %f, want: %f", 0, pd, 1.0)
+		}
+	})
+
+	t.Run("CalculateError", func(t *testing.T) {
+		neuron.CalculateOutput([]float64{1, 0})
+		error := neuron.CalculateError(0)
+
+		if error != 0.81 {
+			t.Errorf("Neuron.CalculateError(%d) = %f, want: %f", 0, error, 0.81)
 		}
 	})
 }
