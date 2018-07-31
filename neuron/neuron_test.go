@@ -59,6 +59,74 @@ func TestNeuron(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("Output", func(t *testing.T) {
+		output := neuron.Output()
+
+		if output != neuron.output {
+			t.Errorf("Neuron.Output() = %f, want: %f", 0, output, neuron.output)
+		}
+	})
+
+	t.Run("Weight", func(t *testing.T) {
+		weight := neuron.Weight(0)
+
+		if weight != neuron.weights[0] {
+			t.Errorf("Neuron.Weight(%d) = %f, want: %f", 0, weight, neuron.weights[0])
+		}
+	})
+
+	t.Run("Weights", func(t *testing.T) {
+		weights := neuron.Weights()
+
+		if !cmp.Equal(neuron.weights, weights) {
+			t.Errorf("Neuron.Weights() = %v, want: %v", weights, neuron.weights)
+		}
+	})
+
+	t.Run("Bias", func(t *testing.T) {
+		bias := neuron.Bias()
+
+		if bias != neuron.bias {
+			t.Errorf("Neuron.Bias() = %f, want: %f", 0, bias, neuron.bias)
+		}
+	})
+
+	t.Run("SetNewWeight", func(t *testing.T) {
+		neuron.SetNewWeight(0.5, 0)
+
+		if neuron.newWeights[0] != 0.5 {
+			t.Errorf("Neuron.SetNewWeight(). neuron.newWeights[%d] = %f, want: %f", 0, neuron.newWeights[0], 0.5)
+		}
+	})
+
+	t.Run("SetNewBias", func(t *testing.T) {
+		neuron.SetNewBias(0.5)
+
+		if neuron.newBias != 0.5 {
+			t.Errorf("Neuron.SetNewBias(). neuron.newBias = %f, want: %f", neuron.newBias, 0.5)
+		}
+	})
+
+	t.Run("UpdateWeightsAndBias", func(t *testing.T) {
+		neuron.SetNewWeight(0.5, 0)
+		neuron.SetNewWeight(0.6, 1)
+		neuron.SetNewBias(0.4)
+
+		neuron.UpdateWeightsAndBias()
+
+		if neuron.weights[0] != 0.5 {
+			t.Errorf("Neuron.UpdateWeightsAndBias(). neuron.weights[0] = %f, want: %f", neuron.weights[0], 0.5)
+		}
+
+		if neuron.weights[1] != 0.6 {
+			t.Errorf("Neuron.UpdateWeightsAndBias(). neuron.weights[1] = %f, want: %f", neuron.weights[1], 0.6)
+		}
+
+		if neuron.bias != 0.4 {
+			t.Errorf("Neuron.UpdateWeightsAndBias(). neuron.bias = %f, want: %f", neuron.bias, 0.4)
+		}
+	})
 }
 
 func TestNew(t *testing.T) {
