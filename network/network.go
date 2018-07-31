@@ -212,7 +212,7 @@ func (network *NeuralNetwork) CalculateError(targetOutput []float64) (float64, e
 func New(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int, learningRate float64, hiddenLayerActivationFunctionName, outputLayerActivationFunctionName string) (*NeuralNetwork, error) {
 	hiddenLayerActivationService, err := activation.New(hiddenLayerActivationFunctionName)
 	if err != nil {
-		return nil, fmt.Errorf("invalid activation function: %v", err)
+		return nil, fmt.Errorf("unable to create hidden layer activation service for %s: %v", hiddenLayerActivationFunctionName, err)
 	}
 	hiddenLayer, err := layer.New(numberOfHiddenNeurons, numberOfInputs, hiddenLayerActivationService)
 	if err != nil {
@@ -221,7 +221,7 @@ func New(numberOfInputs, numberOfHiddenNeurons, numberOfOutputs int, learningRat
 
 	outputLayerActivationService, err := activation.New(outputLayerActivationFunctionName)
 	if err != nil {
-		return nil, fmt.Errorf("invalid activation function: %v", err)
+		return nil, fmt.Errorf("unable to create output layer activation service for %s: %v", outputLayerActivationFunctionName, err)
 	}
 	outputLayer, err := layer.New(numberOfOutputs, numberOfHiddenNeurons, outputLayerActivationService)
 	if err != nil {
