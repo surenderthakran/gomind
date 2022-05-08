@@ -34,7 +34,7 @@ Note: To understand the basic functioning of back-propagation in neural networks
 package main
 
 import (
-	"github.com/singhsurender/gomind"
+	"github.com/surenderthakran/gomind
 )
 
 func main() {
